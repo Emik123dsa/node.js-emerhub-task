@@ -5,10 +5,19 @@
   "repository": "https://github.com/Emik123dsa/node.js-emerhub-task.git",
   "author": "= <=>",
   "license": "MIT",
+  "scripts": {
+    "rimraf": "rimraf ./build",
+    "dev": "yarn run rimraf && cross-env NODE_ENV=development webpack -w --config webpack/server/webpack.server.dev.babel.js",
+    "build": "yarn run cross-env NODE_ENV=production webpack --config webpack/server/webpack.server.prod.babel.js",
+    "start": "nodemon server/index.js"
+  },
   "dependencies": {
+    "autoprefixer": "^9.8.4",
     "babel": "^6.23.0",
+    "babel-plugin-styled-components": "^1.10.7",
     "clean-webpack-plugin": "^3.0.0",
     "commonjs2": "^1.0.0",
+    "copy-webpack-plugin": "^6.0.3",
     "cross-env": "^7.0.2",
     "css-loader": "^3.6.0",
     "eslint": "^7.3.1",
@@ -33,8 +42,10 @@
     "node-sass": "^4.14.1",
     "nodemon": "^2.0.4",
     "normalizr": "^3.6.0",
+    "npm-run-all": "^4.1.5",
     "path": "^0.12.7",
     "postcss-loader": "^3.0.0",
+    "progress-bar-webpack-plugin": "^2.1.0",
     "qs": "^6.9.4",
     "sass-loader": "^9.0.0",
     "style-loader": "^1.2.1",
@@ -47,6 +58,7 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-middleware": "^3.7.2",
     "webpack-hot-middleware": "^2.25.0",
+    "webpack-merge": "^4.2.2",
     "webpack-node-externals": "^1.7.2"
   },
   "devDependencies": {
