@@ -3,16 +3,14 @@ const webpack = require("webpack");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CircularDependencyPlugin = require("circular-dependency-plugin");
-
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const VueSSRClientPlugin = require("vue-server-renderer/client-plugin");
 
 const plugins = [
   new VueLoaderPlugin(),
   new VueSSRClientPlugin(),
-  new webpack.NoEmitOnErrorsPlugin(),
   new webpack.optimize.OccurrenceOrderPlugin(),
-  new webpack.HotModuleReplacementPlugin(),
   new webpack.SourceMapDevToolPlugin({
     filename: "main.js.map",
     exclude: ["bundle.js"],
@@ -26,6 +24,7 @@ const plugins = [
     exclude: /node_modules/,
     failOnError: false,
   }),
+  new webpack.NoEmitOnErrorsPlugin(),
 ];
 
 module.exports = require("./../../webpack.config")({

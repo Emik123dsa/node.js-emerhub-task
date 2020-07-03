@@ -9,7 +9,7 @@ const nodeConfig = {
   mode: "development",
   target: "node",
   entry: {
-    main: ["./server/index.js"],
+    main: ["babel-polyfill", "./server/index.js"],
   },
   externals: [nodeExternals()],
   output: {

@@ -1,7 +1,7 @@
 <template>
   <div>Hello
     <router-link to="/123">
-    Helo</router-link>
+    Helo123s</router-link>
 
   </div>
 </template>

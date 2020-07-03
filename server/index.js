@@ -1,3 +1,6 @@
+import start from "./vendor";
+start();
+
 import path from "path";
 
 import express from "express";
@@ -6,10 +9,7 @@ import { createBundleRenderer } from "vue-server-renderer";
 
 import fs from "fs";
 
-const template = fs.readFileSync(
-  path.resolve("build/main.html"),
-  "utf-8"
-);
+const template = fs.readFileSync(path.resolve("build/main.html"), "utf-8");
 
 import serverBundle from "../build/vue-ssr-server-bundle.json";
 import clientManifest from "../build/vue-ssr-client-manifest.json";
@@ -24,6 +24,8 @@ const renderer = createBundleRenderer(serverBundle, {
 });
 
 server.use("/", express.static(path.resolve("build")));
+
+server.use("/api/", require("./vendor/Routes"));
 
 server.get("*", (req, res) => {
   const context = { url: req.url };

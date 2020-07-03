@@ -1,5 +1,5 @@
 export const VENDOR_CONNECTION = {
-  db_name: "",
-  db_user: "",
-  db_password: "",
+  db_user: "debian-thief",
+  db_password: "Rjyafqyvtyn15",
+  db_name: "__vendor",
 };
