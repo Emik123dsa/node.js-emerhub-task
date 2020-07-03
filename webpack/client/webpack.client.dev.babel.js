@@ -4,15 +4,22 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CircularDependencyPlugin = require("circular-dependency-plugin");
 
+const VueLoaderPlugin = require("vue-loader/lib/plugin");
+const VueSSRClientPlugin = require("vue-server-renderer/client-plugin");
+
 const plugins = [
+  new VueLoaderPlugin(),
+  new VueSSRClientPlugin(),
   new webpack.NoEmitOnErrorsPlugin(),
   new webpack.optimize.OccurrenceOrderPlugin(),
+  new webpack.HotModuleReplacementPlugin(),
   new webpack.SourceMapDevToolPlugin({
     filename: "main.js.map",
     exclude: ["bundle.js"],
   }),
   new HtmlWebpackPlugin({
     template: "static/index.html",
+    inject: false,
     filename: "main.html",
   }),
   new CircularDependencyPlugin({
@@ -21,10 +28,10 @@ const plugins = [
   }),
 ];
 
-module.exports = require("../../webpack.config")({
+module.exports = require("./../../webpack.config")({
   mode: "development",
   entry: {
-    main: ["babel-polyfill", "./client/index.js"],
+    main: ["babel-polyfill", "./client/entry-client.js"],
   },
   target: "web",
   output: {

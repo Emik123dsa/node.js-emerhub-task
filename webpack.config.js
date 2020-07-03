@@ -1,21 +1,21 @@
-require("@babel/polyfill");
+require("@babel/polyfill")
 require("@babel/plugin-syntax-class-properties");
 
 const webpack = require("webpack");
 const path = require("path");
-//const CopyWebpackPlugin = require("copy-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ProgressBarWebpackPlugin = require("progress-bar-webpack-plugin");
 
 const autoprefixer = require("autoprefixer");
 
 const plugins = [
   new ProgressBarWebpackPlugin(),
-  // new CopyWebpackPlugin({
-  //   patterns: [
-  //     { from: "src/assets/img", to: "img" },
-  //     { from: "static/**", to: "." },
-  //   ],
-  // }),
+  new CopyWebpackPlugin({
+    patterns: [
+      { from: "src/assets/img", to: "img" },
+      { from: "static/**", to: "." },
+    ],
+  }),
   new webpack.ProvidePlugin({
     fetch: "exports-loader?self.fetch!whatwg-fetch",
   }),
@@ -26,6 +26,7 @@ const plugins = [
   }),
   new webpack.NamedModulesPlugin(),
 ];
+
 module.exports = (options) => ({
   mode: options.mode,
   entry: options.entry,
@@ -161,8 +162,7 @@ module.exports = (options) => ({
     mainFields: ["browser", "main", "jsnext:main"],
   },
   plugins: options.plugins.concat(plugins),
-  target: options.target,
-  perfomance: options.perfomance || {},
+  performance: options.perfomance || {},
   node: {
     child_process: "empty",
     fs: "empty",

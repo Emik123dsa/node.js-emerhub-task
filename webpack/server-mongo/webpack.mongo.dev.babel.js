@@ -3,17 +3,13 @@ const path = require("path");
 const nodeExternals = require("webpack-node-externals");
 const webpack = require("webpack");
 
-const VueLoaderPlugin = require("vue-loader/lib/plugin");
-
-const VueSSRServerPlugin = require("vue-server-renderer/server-plugin");
-
-const rules = require("./rules");
+const rules = require("../server/rules");
 
 const nodeConfig = {
   mode: "development",
   target: "node",
   entry: {
-    main: ["./server/entry-server.js"],
+    main: ["./server/index.js"],
   },
   externals: [nodeExternals()],
   output: {
@@ -27,8 +23,6 @@ const nodeConfig = {
     rules,
   },
   plugins: [
-    new VueLoaderPlugin(),
-    new VueSSRServerPlugin(),
     new webpack.ProvidePlugin({
       window: path.resolve(path.join(__dirname, "../../helpers/window.mock")),
       document: "global/document",
@@ -37,12 +31,15 @@ const nodeConfig = {
     new webpack.NoEmitOnErrorsPlugin(),
   ],
   resolve: {
+    alias: {
+      m: path.resolve("server/vendor/Model"),
+      v: path.resolve("server/vendor/View"),
+      c: path.resolve("server/vendor/Controller"),
+    },
     modules: ["node_modules"],
     extensions: [".js", ".jsx", ".react.js"],
     mainFields: ["browser", "jsnext:main", "main"],
   },
 };
 
-const browserConfig = require("../client/webpack.client.dev.babel");
-
-module.exports = [nodeConfig, browserConfig];
+module.exports = [nodeConfig];
