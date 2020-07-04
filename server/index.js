@@ -7,6 +7,9 @@ import express from "express";
 
 import { createBundleRenderer } from "vue-server-renderer";
 
+import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
+
 import fs from "fs";
 
 const template = fs.readFileSync(path.resolve("build/main.html"), "utf-8");
@@ -22,6 +25,11 @@ const renderer = createBundleRenderer(serverBundle, {
   clientManifest,
   inject: false,
 });
+
+server.use(bodyParser.json());
+server.use(bodyParser.urlencoded({ extended: false }));
+
+server.use(cookieParser());
 
 server.use("/", express.static(path.resolve("build")));
 
