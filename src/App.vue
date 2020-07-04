@@ -1,21 +1,20 @@
 <template>
-  <div class="crutch">
-    Hello, from Vue12312312347123
-    <div>
-      <router-view></router-view>
-    </div>
+  <div class="page">
+    <sui-container text>
+      <div>
+        <router-view></router-view>
+      </div>
+    </sui-container>
   </div>
 </template>
 
 <script>
 export default {
-    metaInfo: {
-        title: "123" 
-    }
+  metaInfo: {
+    title: "Stolen Bikes | Emerhub"
+  }
 };
-
 </script>
 
 <style lang="scss">
-
 </style>

@@ -1,3 +1,5 @@
+import "../src/utils/sementic-ui-vue";
+
 import { createApp } from "../src/";
 
 const { app, router, store } = createApp();

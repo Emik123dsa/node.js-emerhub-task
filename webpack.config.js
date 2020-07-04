@@ -63,7 +63,7 @@ module.exports = (options) => ({
       {
         test: /\.scss$/,
         use: [
-          "isomorphic-style-loader",
+          "vue-style-loader",
           {
             loader: "css-loader",
             options: {
@@ -92,7 +92,7 @@ module.exports = (options) => ({
       {
         test: /\.sass$/,
         use: [
-          "isomorphic-style-loader",
+          "vue-style-loader",
           {
             loader: "css-loader",
             options: {
@@ -121,7 +121,7 @@ module.exports = (options) => ({
       {
         test: /\.css$/,
         use: [
-          "isomorphic-style-loader",
+          "vue-style-loader",
           {
             loader: "css-loader",
             options: {

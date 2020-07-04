@@ -26,7 +26,7 @@ const rules = [
     test: /\.sass$/,
     exclude: /node_modules/,
     use: [
-      "isomorphic-style-loader",
+      "vue-style-loader",
       {
         loader: "css-loader",
         options: {
@@ -55,7 +55,7 @@ const rules = [
   {
     test: /\.scss$/,
     use: [
-      "isomorphic-style-loader",
+      "vue-style-loader",
       {
         loader: "css-loader",
         options: {
@@ -84,7 +84,7 @@ const rules = [
   {
     test: /\.css$/,
     use: [
-      "isomorphic-style-loader",
+      "vue-style-loader",
       {
         loader: "css-loader",
         options: {

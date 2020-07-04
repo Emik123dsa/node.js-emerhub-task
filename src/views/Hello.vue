@@ -1,5 +1,5 @@
 <template>
-  <div>Hello
+  <div class="cruthc">
     <router-link to="/123">
     Helo123s</router-link>
 
@@ -11,4 +11,5 @@ export default {};
 </script>
 
 <style>
+
 </style>
