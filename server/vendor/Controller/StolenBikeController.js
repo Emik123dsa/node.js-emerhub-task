@@ -1,5 +1,6 @@
 const { Router } = require("express");
-
+const bcrypt = require("bcryptjs");
+const { getHash, compare } = require("../Helpers/Hash");
 const { check, validationResult } = require("express-validator");
 
 const status = {
@@ -12,17 +13,18 @@ const status = {
 const yyyymmdd = require("../Helpers/Date");
 
 const StolenBikes = require("../Model/StolenBikes");
+const Owners = require("../Model/Owners");
 
 const router = Router();
 
 router.get(
   "/getStolenBikes",
   [
-    check("name", "Name is required").isString(),
-    check("owner", "Owner is required").isString(),
+    check("passport_number", "Passport is required").isString(),
+    check("email", "Passport is required").isString(),
   ],
   async (req, res) => {
-    const { owner, model_bike, serial_number, name_bike } = req.query;
+    const { serial_number, passport_number } = req.query;
 
     const errors = validationResult(req);
 
@@ -33,12 +35,18 @@ router.get(
       });
     }
 
-    var query = StolenBikes.findOne({
-      owner: owner,
-      name_bike: name_bike,
-      serial_number: serial_number,
-      model_bike: model_bike,
-    });
+    var query;
+
+    if (serial_number) {
+      query = StolenBikes.findOne({
+        serial_number: serial_number,
+        passport_number: passport,
+      });
+    } else {
+      query = StolenBikes.find({
+        passport_number: passport,
+      });
+    }
 
     query.select(
       "id owner name_bike model_bike serial_number asap status created_at modified_at"
@@ -61,10 +69,11 @@ router.get(
 router.post(
   "/fillOutStolenBikes",
   [
-    check("owner", "Owner is required").isString(),
-    check("name_bike", "Name of bike is required").isString(),
-    check("model_bike", "Model of bike is required").isAscii(),
+    check("name_bike", "Name of bike is required").notEmpty(),
+    check("model_bike", "Model of bike is required").notEmpty(),
     check("serial_number", "Serial number is required").isString(),
+    check("passport_number", "Passport number is required").notEmpty(),
+    check("email", "Email is required").isEmail(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -77,34 +86,70 @@ router.post(
     }
 
     try {
-      const { owner, name, model, serial_number, asap } = req.body;
+      const {
+        name_bike,
+        model_bike,
+        serial_number,
+        asap,
+        passport_number,
+        email,
+      } = req.body;
 
-      var saveToStolenBieks = new StolenBikes({
-        id: Date.now().toString(),
-        owner: owner,
-        name_bike: name,
-        model_bike: model,
-        serial_number: serial_number,
-        asap: asap ? asap : false,
-        status: status.PENDING,
-        created_at: yyyymmdd,
-        modified_at: yyyymmdd,
-      });
+      var query = await Owners.findOne({
+        email: email,
+      })
+        .select("passport_number bikes id")
+        .orFail((err) => {
+          return res.status(400).json({
+            msg: "This client is not existing",
+            code: 2,
+          });
+        });
 
-      saveToStolenBieks.save(function(error) {
-        if (error) return handleError(error);
-      });
+      const match = await bcrypt.compare(
+        passport_number,
+        query.passport_number
+      );
 
-      return res.status(200).json({
-        details: ["Stolen bike has been succesfully added"],
-        msg: "OK",
-        code: 1,
-        get: req.query,
-        post: req.body,
-      });
+      if (match) {
+        var owners = Owners.where({ email: email });
+ 
+        var saveToStolenBikes = new StolenBikes({
+          id: Date.now().toString(),
+          name_bike: name_bike,
+          model_bike: model_bike,
+
+          serial_number: serial_number,
+          asap: asap ? asap : false,
+          status: status.PENDING,
+          created_at: yyyymmdd,
+          modified_at: yyyymmdd,
+        });
+
+        await saveToStolenBikes.save((error) => {
+          if (error) {
+            return res.status(400).json({
+              code: 2,
+              error,
+            });
+          }
+          return res.status(200).json({
+            details: ["Stolen bike has been succesfully added"],
+            msg: "OK",
+            code: 1,
+            get: req.query,
+            post: req.body,
+          });
+        });
+      } else {
+        return res.status(401).json({
+          msg: "Passport number is required",
+          code: 2,
+        });
+      }
     } catch (e) {
       return res.status(500).json({
-        msg: "Internal server error",
+        msg: "Your request hasn't been approven",
         code: 5,
       });
     }
