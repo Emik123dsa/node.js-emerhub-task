@@ -4,12 +4,13 @@ const schema = new Schema(
   {
     id: { type: String, required: true },
     owner: { type: String, required: true },
-    name: { type: String, required: true },
-    asap: { type: String, required: true },
-    status: { type: String, required: true },
-    resolved: {type: Boolean, required: true },
-    created_at: { type: String, required: false },
-    modified_at: { type: String, required: false },
+    model_bike: { type: String, required: true },
+    serial_number: { type: String, required: true },
+    name_bike: { type: String, required: true },
+    asap: { type: String, required: false },
+    status: { type: String, required: false },
+    created_at: { type: Date, required: true },
+    modified_at: { type: Date, required: false },
   },
   { collection: "eh_stolen_bikes" }
 );
