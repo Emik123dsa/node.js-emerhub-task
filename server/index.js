@@ -1,5 +1,10 @@
-import start from "./vendor";
-start();
+import Database from "./vendor";
+
+const DB = new Database();
+
+if (DB instanceof Database) {
+  DB.initDB();
+}
 
 import path from "path";
 

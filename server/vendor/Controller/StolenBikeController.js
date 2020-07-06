@@ -20,11 +20,12 @@ const router = Router();
 router.get(
   "/getStolenBikes",
   [
+    check("serial_number", "Serial number is required").notEmpty(),
     check("passport_number", "Passport is required").isString(),
-    check("email", "Passport is required").isString(),
+    check("email", "Email is required").isString(),
   ],
   async (req, res) => {
-    const { serial_number, passport_number } = req.query;
+    const { serial_number, passport_number, email } = req.query;
 
     const errors = validationResult(req);
 
@@ -35,34 +36,64 @@ router.get(
       });
     }
 
-    var query;
-
-    if (serial_number) {
-      query = StolenBikes.findOne({
-        serial_number: serial_number,
-        passport_number: passport,
+    var owner = await Owners.findOne({
+      email: email,
+    })
+      .select("bikes passport_number")
+      .orFail((err) => {
+        return res.status(400).json({
+          msg: "This client is not existing",
+          code: 2,
+        });
       });
-    } else {
-      query = StolenBikes.find({
-        passport_number: passport,
-      });
-    }
 
-    query.select(
-      "id owner name_bike model_bike serial_number asap status created_at modified_at"
+    const passport = await bcrypt.compare(
+      passport_number,
+      owner.passport_number
     );
 
-    query.exec((err, person) => {
-      if (err) return handleError(err);
+    if (passport) {
+      if (!owner.bikes.some((item) => item === serial_number)) {
+        return res.status(400).json({
+          code: 3,
+          msg: "Bike hasn't found",
+        });
+      }
 
-      return res.status(200).json({
-        details: person ? person : [],
-        msg: person ? "OK" : "Stealen bike hasn't been found",
-        code: person ? 1 : 2,
-        get: req.query,
-        post: req.body,
+      if (owner.bikes.length > 0) {
+        var stolenBike;
+
+        stolenBike = StolenBikes.findOne({
+          serial_number: serial_number,
+        });
+
+        stolenBike.select(
+          "id owner name_bike model_bike serial_number asap status created_at modified_at"
+        );
+
+        stolenBike.exec((err, person) => {
+          if (err) return handleError(err);
+
+          return res.status(200).json({
+            details: person ? person : [],
+            msg: person ? "OK" : "Stealen bike hasn't been found",
+            code: person ? 1 : 2,
+            get: req.query,
+            post: req.body,
+          });
+        });
+      } else {
+        return res.status(200).json({
+          msg: "This user is not having any stolen bikes yet",
+          code: 2,
+        });
+      }
+    } else {
+      return res.status(401).json({
+        msg: "This user is not existing",
+        code: 2,
       });
-    });
+    }
   }
 );
 
@@ -112,13 +143,17 @@ router.post(
       );
 
       if (match) {
-        var owners = Owners.where({ email: email });
- 
+        if (query.bikes.length > 4) {
+          return res.status(201).json({
+            code: 3,
+            msg: "You have reached out common limit requests of stolen bikes",
+          });
+        }
+
         var saveToStolenBikes = new StolenBikes({
           id: Date.now().toString(),
           name_bike: name_bike,
           model_bike: model_bike,
-
           serial_number: serial_number,
           asap: asap ? asap : false,
           status: status.PENDING,
@@ -126,13 +161,24 @@ router.post(
           modified_at: yyyymmdd,
         });
 
-        await saveToStolenBikes.save((error) => {
+        await saveToStolenBikes.save(async (error) => {
           if (error) {
             return res.status(400).json({
               code: 2,
               error,
             });
           }
+
+          await Owners.findOneAndUpdate(
+            { email: email },
+            { $push: { bikes: serial_number } },
+            {
+              upsert: true,
+              useFindAndModify: false,
+              rawResult: true,
+            }
+          );
+
           return res.status(200).json({
             details: ["Stolen bike has been succesfully added"],
             msg: "OK",

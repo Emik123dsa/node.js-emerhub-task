@@ -2,13 +2,22 @@ const { Router } = require("express");
 const { getHash, compare } = require("../Helpers/Hash");
 const { check, validationResult } = require("express-validator");
 
+const status = {
+  PENDING: "PENDING",
+  ACTIVE: "ACTIVE",
+  APPROVEN: "APPROVEN",
+  DENIED: "DENIED",
+};
+
 const { v4: uuidv4 } = require("uuid");
 
 import config from "../Config";
 
 const { VENDOR_CONNECTION } = config;
 
-const Owners = require("../Model/Owners");
+const StolenBikes = require("../Model/StolenBikes");
+
+const Policers = require("../Model/Policers");
 
 const yyyymmdd = require("../Helpers/Date");
 
@@ -16,14 +25,17 @@ const jwt = require("jsonwebtoken");
 
 const router = Router();
 
+router.post("/resolveStolenBike", [], async (req, res) => {});
+
+router.post("/deniedStolenBike", [], async (req, res) => {});
+
+router.get("/getStolenBikes", [], async (req, res) => {});
+
 router.post(
-  "/createBikeUser",
+  "/createPoliceQuery",
   [
-    check("owner", "Owner is required").notEmpty(),
-    check("address", "Address is required").notEmpty(),
-    check("phone_number", "Phone number is required").isMobilePhone(),
-    check("passport_number", "Passport number is required").isMobilePhone(),
-    check("email", "Email is not correct").isEmail(),
+    check("bearer", "Police Identificator is required").notEmpty(),
+    check("email", "Email is required").isEmail(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -36,32 +48,57 @@ router.post(
     }
 
     try {
-      const { owner, address, phone_number, passport_number, email } = req.body;
+      const { email, bearer } = req.body;
 
-      const passport = await getHash(passport_number);
+      let bearerToken = await getHash(bearer);
 
-      var createUser = new Owners({
+      var servedBikes = [];
+
+      var isAvailable = true;
+
+      var stolen_bikes = await StolenBikes.find()
+        .sort("created_at")
+        .orFail((err) =>
+          res.status(400).json({
+            msg: "Bikes are not existing in the table yet",
+            code: 2,
+            error: err,
+          })
+        );
+
+      if (stolen_bikes.some((item) => item.status === status.PENDING)) {
+
+        var currentBike = stolen_bikes.find(
+          (item) => item.status === status.PENDING
+        );
+
+        servedBikes = [updatedBike];
+
+        isAvailable = false;
+      } else {
+        isAvailable = true;
+      }
+
+      var createPolicer = new Policers({
         id: uuidv4(),
-        address: address,
-        owner: owner,
-        bikes: [],
-        phone_number: phone_number,
-        passport_number: passport,
+        bearer: bearerToken,
         email: email,
-        parent: "user",
+        is_available: isAvailable,
+        served_bikes: servedBikes,
+        parent: "policer",
         created_at: yyyymmdd,
         modified_at: yyyymmdd,
       });
 
       const token = jwt.sign(
         {
-          userPassport: passport,
+          policeIdentificator: bearerToken,
         },
         VENDOR_CONNECTION.json_web_token,
         { expiresIn: 60 * 60 * 24 }
       );
 
-      await createUser.save((error) => {
+      await createPolicer.save((error) => {
         if (error) {
           return res.status(400).json({
             code: 2,

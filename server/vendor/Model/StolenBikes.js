@@ -15,6 +15,6 @@ const schema = new Schema(
   { collection: "eh_stolen_bikes" }
 );
 
-schema.plugin(uniqueValidator, { type: "mongoose-unique-validator" });
+schema.plugin(uniqueValidator, { type: "stolen-bikes-validator" });
 
 module.exports = model("StolenBikes", schema);
