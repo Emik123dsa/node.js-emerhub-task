@@ -1,5 +1,6 @@
 const { Router } = require("express");
-const { getHash, compare } = require("../Helpers/Hash");
+const bcrypt = require("bcryptjs");
+const { getHash } = require("../Helpers/Hash");
 const { check, validationResult } = require("express-validator");
 
 const status = {
@@ -25,11 +26,154 @@ const jwt = require("jsonwebtoken");
 
 const router = Router();
 
-router.post("/resolveStolenBike", [], async (req, res) => {});
+router.post(
+  "/resolveStolenBike",
+  [
+    check("email", "Email is required").isEmail(),
+    check("operation", "Operation is required").notEmpty(),
+    check("bearer", "Police identificator is required").notEmpty(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
 
-router.post("/deniedStolenBike", [], async (req, res) => {});
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        error: errors.array(),
+        msg: req.query,
+      });
+    }
 
-router.get("/getStolenBikes", [], async (req, res) => {});
+    var isAvailable = true;
+    var servedBikes = [];
+
+    try {
+      const { email, operation, bearer } = req.body;
+
+      var owner = await Policers.findOne({
+        email: email,
+      });
+
+      if (owner === null || typeof owner === null) {
+        return res.status(401).json({
+          msg: "This policer is not existing",
+          code: 2,
+        });
+      }
+
+      const match = await bcrypt.compare(bearer, owner.bearer);
+
+      if (match) {
+        if (owner.served_bikes.length === 1) {
+          var updatedStolenBike = await StolenBikes.findOne({
+            serial_number: owner.served_bikes[0]["serial_number"],
+          });
+
+          if (updatedStolenBike) {
+            await StolenBikes.findOneAndUpdate(
+              {
+                serial_number: owner.served_bikes[0]["serial_number"],
+              },
+              {
+                status: operation,
+                modified_at: yyyymmdd,
+              },
+              {
+                upsert: true,
+                useFindAndModify: false,
+                rawResult: true,
+              }
+            );
+
+            const historyBikes = {
+              id: updatedStolenBike.id,
+              name_bike: updatedStolenBike.name_bike,
+              serial_number: updatedStolenBike.serial_number,
+              asap: updatedStolenBike.asap,
+              status: operation,
+              created_at: updatedStolenBike.created_at,
+              modified_at: yyyymmdd,
+            };
+
+            var remainStolenBikes = await StolenBikes.find().sort("created_at");
+
+            if (remainStolenBikes.length > 0) {
+              if (
+                remainStolenBikes.some((item) => item.status === status.PENDING)
+              ) {
+                isAvailable = false;
+                servedBikes = remainStolenBikes.find(
+                  (item) => item.status === status.PENDING
+                );
+
+                await StolenBikes.findOneAndUpdate(
+                  {
+                    id: servedBikes.id,
+                  },
+                  {
+                    status: status.ACTIVE,
+                    modified_at: yyyymmdd,
+                  },
+                  {
+                    upsert: true,
+                    useFindAndModify: false,
+                    rawResult: true,
+                  }
+                );
+              }
+            }
+
+            await Policers.findOneAndUpdate(
+              {
+                email: email,
+              },
+              {
+                served_bikes: servedBikes,
+                is_available: isAvailable,
+                $push: {
+                  history_bikes: historyBikes,
+                },
+                modified_at: yyyymmdd,
+              },
+              {
+                upsert: true,
+                useFindAndModify: false,
+                rawResult: true,
+              }
+            );
+
+            return res.status(200).json({
+              details: updatedStolenBike,
+              msg: "Updated",
+              code: 1,
+            });
+          } else {
+            return res.status(400).json({
+              msg: "Sorry, this stolen bikes is not existing",
+              code: 2,
+            });
+          }
+        } else {
+          return res.status(400).json({
+            msg: "Sorry, but you are not having any served bikes yet",
+            code: 2,
+          });
+        }
+      } else {
+        return res.status(401).json({
+          msg: "This policer is not existing",
+          code: 2,
+        });
+      }
+    } catch (e) {
+      return res.status(500).json({
+        msg: "Your request hasn't been approven",
+        code: 5,
+      });
+    }
+  }
+);
+
+router.get("/getHistoryOfStolenBikes", [], async (req, res) => {});
 
 router.post(
   "/createPoliceQuery",
@@ -86,6 +230,7 @@ router.post(
         email: email,
         is_available: isAvailable,
         served_bikes: servedBikes,
+        history_bikes: servedBikes,
         parent: "policer",
         created_at: yyyymmdd,
         modified_at: yyyymmdd,

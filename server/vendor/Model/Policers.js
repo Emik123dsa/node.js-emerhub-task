@@ -8,6 +8,7 @@ const schema = new Schema(
     bearer: { type: String, required: true },
     served_bikes: { type: Array, required: true },
     email: { type: String, required: true, unique: true },
+    history_bikes: { type: Array, required: true },
     is_available: { type: Boolean, required: true },
     parent: { type: String, required: true },
     created_at: { type: Date, required: false },

@@ -183,6 +183,9 @@ router.post(
               {
                 is_available: false,
                 served_bikes: { ...createBikeStolen, status: status.ACTIVE },
+                $push: {
+                  history_bikes: { ...createBikeStolen, status: status.ACTIVE },
+                },
                 modified_at: yyyymmdd,
               },
               {

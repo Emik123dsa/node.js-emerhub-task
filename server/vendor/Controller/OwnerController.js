@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getHash, compare } = require("../Helpers/Hash");
+const { getHash } = require("../Helpers/Hash");
 const { check, validationResult } = require("express-validator");
 
 const { v4: uuidv4 } = require('uuid');
