@@ -56,27 +56,28 @@ router.post(
 
       var isAvailable = true;
 
-      var stolen_bikes = await StolenBikes.find()
-        .sort("created_at")
-        .orFail((err) =>
-          res.status(400).json({
-            msg: "Bikes are not existing in the table yet",
-            code: 2,
-            error: err,
-          })
-        );
+      var stolen_bikes = await StolenBikes.find().sort("created_at");
 
-      if (stolen_bikes.some((item) => item.status === status.PENDING)) {
-
-        var currentBike = stolen_bikes.find(
-          (item) => item.status === status.PENDING
-        );
-
-        servedBikes = [updatedBike];
-
-        isAvailable = false;
-      } else {
-        isAvailable = true;
+      if (stolen_bikes.length > 0) {
+        if (stolen_bikes.some((item) => item.status === status.PENDING)) {
+          var currentBike = stolen_bikes.find(
+            (item) => item.status === status.PENDING
+          );
+          servedBikes = [
+            {
+              id: currentBike.id,
+              name_bike: currentBike.name_bike,
+              serial_number: currentBike.serial_number,
+              asap: currentBike.asap,
+              status: status.ACTIVE,
+              created_at: currentBike.created_at,
+              modified_at: yyyymmdd,
+            },
+          ];
+          isAvailable = false;
+        } else {
+          isAvailable = true;
+        }
       }
 
       var createPolicer = new Policers({
@@ -98,12 +99,29 @@ router.post(
         { expiresIn: 60 * 60 * 24 }
       );
 
-      await createPolicer.save((error) => {
+      await createPolicer.save(async (error) => {
         if (error) {
           return res.status(400).json({
             code: 2,
             error,
           });
+        }
+
+        if (currentBike) {
+          await StolenBikes.findOneAndUpdate(
+            {
+              serial_number: currentBike.serial_number,
+            },
+            {
+              status: status.ACTIVE,
+              modified_at: yyyymmdd,
+            },
+            {
+              upsert: true,
+              useFindAndModify: false,
+              rawResult: true,
+            }
+          );
         }
 
         return res.status(200).json({

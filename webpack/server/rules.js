@@ -31,12 +31,6 @@ const rules = [
         loader: "css-loader",
         options: {
           importLoaders: 1,
-          modules: {
-            localIdentName:
-              process.env.NODE_ENV !== "production"
-                ? "[name]-[local]-[hash:base64:5]"
-                : "[hash:base64:5]",
-          },
         },
       },
       {
@@ -60,12 +54,6 @@ const rules = [
         loader: "css-loader",
         options: {
           importLoaders: 1,
-          modules: {
-            localIdentName:
-              process.env.NODE_ENV !== "production"
-                ? "[name]-[local]-[hash:base64:5]"
-                : "[hash:base64:5]",
-          },
         },
       },
       {

@@ -14,6 +14,7 @@ const yyyymmdd = require("../Helpers/Date");
 
 const StolenBikes = require("../Model/StolenBikes");
 const Owners = require("../Model/Owners");
+const Policers = require("../Model/Policers");
 
 const router = Router();
 
@@ -38,14 +39,14 @@ router.get(
 
     var owner = await Owners.findOne({
       email: email,
-    })
-      .select("bikes passport_number")
-      .orFail((err) => {
-        return res.status(400).json({
-          msg: "This client is not existing",
-          code: 2,
-        });
+    }).select("bikes passport_number");
+
+    if (typeof owner === null || owner === null) {
+      return res.status(401).json({
+        msg: "This client is not existing",
+        code: 2,
       });
+    }
 
     const passport = await bcrypt.compare(
       passport_number,
@@ -72,7 +73,11 @@ router.get(
         );
 
         stolenBike.exec((err, person) => {
-          if (err) return handleError(err);
+          if (err) {
+            return res.status(400).json({
+              errors: err,
+            });
+          }
 
           return res.status(200).json({
             details: person ? person : [],
@@ -109,6 +114,8 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
 
+    var isAvailable = true;
+
     if (!errors.isEmpty()) {
       return res.status(400).json({
         error: errors.array(),
@@ -128,14 +135,15 @@ router.post(
 
       var query = await Owners.findOne({
         email: email,
-      })
-        .select("passport_number bikes id")
-        .orFail((err) => {
-          return res.status(400).json({
-            msg: "This client is not existing",
-            code: 2,
-          });
+      }).select("passport_number bikes id");
+
+      if (typeof query === null || query === null) {
+        return res.status(401).json({
+          msg:
+            "Sorry, but you can't create stolen bike, until you will sign up",
+          code: 2,
         });
+      }
 
       const match = await bcrypt.compare(
         passport_number,
@@ -150,15 +158,47 @@ router.post(
           });
         }
 
-        var saveToStolenBikes = new StolenBikes({
+        const createBikeStolen = {
           id: Date.now().toString(),
           name_bike: name_bike,
           model_bike: model_bike,
           serial_number: serial_number,
           asap: asap ? asap : false,
-          status: status.PENDING,
           created_at: yyyymmdd,
           modified_at: yyyymmdd,
+        };
+
+        var queryPolicers = await Policers.find().sort("created_at");
+
+        if (queryPolicers) {
+          if (queryPolicers.some((item) => item.is_available === true)) {
+            var currentAvailablePolicers = queryPolicers.find(
+              (item) => !item.served_bikes.length
+            );
+
+            await Policers.findOneAndUpdate(
+              {
+                id: currentAvailablePolicers.id,
+              },
+              {
+                is_available: false,
+                served_bikes: { ...createBikeStolen, status: status.ACTIVE },
+                modified_at: yyyymmdd,
+              },
+              {
+                upsert: true,
+                useFindAndModify: false,
+                rawResult: true,
+              }
+            );
+
+            isAvailable = false;
+          }
+        }
+
+        var saveToStolenBikes = new StolenBikes({
+          ...createBikeStolen,
+          status: !isAvailable ? status.ACTIVE : status.PENDING,
         });
 
         await saveToStolenBikes.save(async (error) => {
