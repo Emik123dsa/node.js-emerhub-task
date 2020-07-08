@@ -173,7 +173,56 @@ router.post(
   }
 );
 
-router.get("/getHistoryOfStolenBikes", [], async (req, res) => {});
+router.get(
+  "/getHistoryBikes",
+  [
+    check("email", "Email is required").isEmail(),
+    check("bearer", "Police identificator is required").notEmpty(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        error: errors.array(),
+        msg: req.query,
+      });
+    }
+    try {
+      const { email, bearer } = req.query;
+
+      var owner = await Policers.findOne({
+        email: email,
+      });
+
+      if (owner === null || typeof owner === null) {
+        return res.status(401).json({
+          msg: "This policer is not existing",
+          code: 2,
+        });
+      }
+
+      const match = await bcrypt.compare(bearer, owner.bearer);
+      if (match) {
+        return res.status(200).json({
+          details: owner && owner.history_bikes,
+          msg: "OK",
+          code: 1,
+        });
+      } else {
+        return res.status(401).json({
+          msg: "This policer is not existing",
+          code: 2,
+        });
+      }
+    } catch (e) {
+      return res.status(500).json({
+        msg: "Your request hasn't been approven",
+        code: 5,
+      });
+    }
+  }
+);
 
 router.post(
   "/createPoliceQuery",

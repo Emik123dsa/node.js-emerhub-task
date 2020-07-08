@@ -173,7 +173,7 @@ router.post(
         if (queryPolicers) {
           if (queryPolicers.some((item) => item.is_available === true)) {
             var currentAvailablePolicers = queryPolicers.find(
-              (item) => !item.served_bikes.length
+              (item) => item.is_available === true
             );
 
             await Policers.findOneAndUpdate(
