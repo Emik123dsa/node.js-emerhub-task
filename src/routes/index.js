@@ -13,7 +13,7 @@ export function createRoute() {
     routes: [
       {
         path: routes.pages.main,
-        component: () => import("../views/Hello.vue"),
+        component: () => import("../views/Default.vue"),
       },
     ],
   });
