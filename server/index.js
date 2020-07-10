@@ -41,7 +41,7 @@ server.use("/", express.static(path.resolve("build")));
 server.use("/api/", require("./vendor/Routes"));
 
 server.get("*", (req, res) => {
-  const context = { url: req.url };
+  const context = { url: req.url, req: req, res: res };
 
   renderer.renderToString(context, (err, html) => {
     if (err) {

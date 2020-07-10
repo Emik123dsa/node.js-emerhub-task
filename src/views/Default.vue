@@ -1,9 +1,16 @@
 <template>
-  
+  <div></div>
 </template>
 
 <script>
-export default {};
+export default {
+  name: "default",
+  data() {
+      return {
+          
+      }
+  }
+};
 </script>
 
 <style>

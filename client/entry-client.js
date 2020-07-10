@@ -1,4 +1,6 @@
 import "../src/utils/sementic-ui-vue";
+import "../src/middleware/vue-rx";
+import "../src/utils/vue-cookies";
 
 import { createApp } from "../src/";
 

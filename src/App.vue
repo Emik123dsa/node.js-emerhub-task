@@ -1,9 +1,9 @@
 <template>
-  <div class="pusher">
+  <div class="pushable">
     <Sidebar />
     <sui-segment vertical>
       <sui-container>
-        <div>
+        <div class="pusher">
           <Header />
           <router-view></router-view>
           <Footer />
@@ -19,6 +19,7 @@ import Footer from "./components/footer/Footer.vue";
 import Sidebar from "./components/sidebar/Sidebar.vue";
 
 export default {
+  name: "App",
   components: {
     Header,
     Footer,
@@ -26,7 +27,22 @@ export default {
   },
   metaInfo: {
     title: "Stolen Bikes | Emerhub"
-  }
+  },
+  async serverPrefetch() {
+    const { dispatch } = this.$store;
+
+    const { req, res } = this.$ssrContext;
+
+    try {
+      await dispatch("main/serverExpressInit", {
+        req: Object.assign({}, req),
+        res: Object.assign({}, res)
+      });
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  },
+  methods: {}
 };
 </script>
 

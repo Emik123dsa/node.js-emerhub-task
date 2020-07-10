@@ -13,7 +13,34 @@ export function createRoute() {
     routes: [
       {
         path: routes.pages.main,
+        name: "default",
         component: () => import("../views/Default.vue"),
+      },
+      {
+        path: routes.pages.users,
+        name: "users",
+        component: () => import("../views/Users.vue"),
+        children: [
+          {
+            path: "create",
+            component: () => import("../views/Users.vue"),
+          },
+        ],
+      },
+      {
+        path: routes.pages.policers,
+        name: "policers",
+        component: () => import("../views/Policers.vue"),
+        children: [
+          {
+            path: "resolve",
+            component: () => import("../views/Users.vue"),
+          },
+          {
+            path: "history",
+            component: () => import("../views/Users.vue"),
+          },
+        ],
       },
     ],
   });
