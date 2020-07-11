@@ -20,12 +20,6 @@ export function createRoute() {
         path: routes.pages.users,
         name: "users",
         component: () => import("../views/Users.vue"),
-        children: [
-          {
-            path: "create",
-            component: () => import("../views/Users.vue"),
-          },
-        ],
       },
       {
         path: routes.pages.policers,

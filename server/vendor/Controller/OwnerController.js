@@ -19,11 +19,11 @@ const router = Router();
 router.post(
   "/createBikeUser",
   [
-    check("owner", "Owner is required").notEmpty(),
-    check("address", "Address is required").notEmpty(),
-    check("phone_number", "Phone number is required").isMobilePhone(),
-    check("passport_number", "Passport number is required").isMobilePhone(),
-    check("email", "Email is not correct").isEmail(),
+    check("owner", "Owner is not valid").notEmpty(),
+    check("address", "Address is not valid").notEmpty(),
+    check("phone_number", "Phone number is not valid").isMobilePhone(),
+    check("passport_number", "Passport number is not valid").isMobilePhone(),
+    check("email", "Email is not valid").isEmail(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -46,8 +46,8 @@ router.post(
         owner: owner,
         bikes: [],
         /********** AUTH ************/
-        //login: "123", // Auth is not required,
-        //password: "123", // Auth is not required
+        //login: "123", // Auth is not not valid,
+        //password: "123", // Auth is not not valid
         /********* END OF AUTH *******/
         phone_number: phone_number,
         passport_number: passport,

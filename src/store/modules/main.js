@@ -14,6 +14,11 @@ export default {
       passport_number: "",
       email: "",
     },
+    user_bikes: {
+      model_bike: "",
+      name_bike: "",
+      serial_number: "",
+    },
     policers: [],
   }),
   mutations: {
@@ -28,6 +33,9 @@ export default {
     },
     SET_API_USER_INTERFACE(state, payload) {
       state.users = payload;
+    },
+    SET_API_BIKE_INTERFACE(state, payload) {
+      state.user_bikes = payload;
     },
   },
   actions: {
@@ -64,12 +72,20 @@ export default {
     setUserInterface({ commit }, { payload }) {
       commit("SET_API_USER_INTERFACE", payload);
     },
+    setBikeInterface({ commit }, { payload }) {
+      commit("SET_API_BIKE_INTERFACE", payload);
+    },
     async createBikeUser({ commit, dispatch }, { payload }) {
       return await _.createUser({ payload, schema: REQUEST.POST });
+    },
+    async fillOutBike({ commit, dispatch }, { payload }) {
+      console.log("123");
     },
   },
   getters: {
     api: (s) => s.api,
     users: (s) => s.users,
+    historyBikes: (s) => s.historyBikes,
+    user_bikes: (s) => s.user_bikes,
   },
 };

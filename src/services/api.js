@@ -54,3 +54,12 @@ export const fetchHistory = async ({ payload, schema }) =>
 
 export const createUser = async ({ payload, schema }) =>
   await callApi(`/api/createBikeUser`, payload, schema);
+
+export const createBike = async ({ payload, schema }) =>
+  await callApi(`/api/fillOutStolenBikes`, payload, schema);
+
+export const createPolice = async ({ payload, schema }) =>
+  await callApi(`/api/createPoliceQuery`, payload, schema);
+
+export const resovleBike = async ({ payload, schema }) =>
+  await callApi(`/api/resolveStolenBike`, payload, schema);

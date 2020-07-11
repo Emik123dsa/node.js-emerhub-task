@@ -21,9 +21,9 @@ const router = Router();
 router.get(
   "/getStolenBikes",
   [
-    check("serial_number", "Serial number is required").notEmpty(),
-    check("passport_number", "Passport is required").isString(),
-    check("email", "Email is required").isString(),
+    check("serial_number", "Serial number is not valid").notEmpty(),
+    check("passport_number", "Passport is not valid").isString(),
+    check("email", "Email is not valid").isString(),
   ],
   async (req, res) => {
     const { serial_number, passport_number, email } = req.query;
@@ -105,11 +105,11 @@ router.get(
 router.post(
   "/fillOutStolenBikes",
   [
-    check("name_bike", "Name of bike is required").notEmpty(),
-    check("model_bike", "Model of bike is required").notEmpty(),
-    check("serial_number", "Serial number is required").isString(),
-    check("passport_number", "Passport number is required").notEmpty(),
-    check("email", "Email is required").isEmail(),
+    check("name_bike", "Name of bike is not valid").notEmpty(),
+    check("model_bike", "Model of bike is not valid").notEmpty(),
+    check("serial_number", "Serial number is not valid").isString(),
+    check("passport_number", "Passport number is not valid").notEmpty(),
+    check("email", "Email is not valid").isEmail(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -232,7 +232,7 @@ router.post(
         });
       } else {
         return res.status(401).json({
-          msg: "Passport number is required",
+          msg: "Passport number is not valid",
           code: 2,
         });
       }

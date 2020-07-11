@@ -29,9 +29,9 @@ const router = Router();
 router.post(
   "/resolveStolenBike",
   [
-    check("email", "Email is required").isEmail(),
-    check("operation", "Operation is required").notEmpty(),
-    check("bearer", "Police identificator is required").notEmpty(),
+    check("email", "Email is not valid").isEmail(),
+    check("operation", "Operation is not valid").notEmpty(),
+    check("bearer", "Police identificator is not valid").notEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -176,8 +176,8 @@ router.post(
 router.get(
   "/getHistoryBikes",
   [
-    check("email", "Email is required").isEmail(),
-    check("bearer", "Police identificator is required").notEmpty(),
+    check("email", "Email is not valid").isEmail(),
+    check("bearer", "Police identificator is not valid").notEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -227,8 +227,8 @@ router.get(
 router.post(
   "/createPoliceQuery",
   [
-    check("bearer", "Police Identificator is required").notEmpty(),
-    check("email", "Email is required").isEmail(),
+    check("bearer", "Police Identificator is not valid").notEmpty(),
+    check("email", "Email is not valid").isEmail(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
