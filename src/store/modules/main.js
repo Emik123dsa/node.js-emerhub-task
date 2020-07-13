@@ -19,7 +19,10 @@ export default {
       name_bike: "",
       serial_number: "",
     },
-    policers: [],
+    policers: {
+      bearer: "",
+      email: "",
+    },
   }),
   mutations: {
     SET_API_BASE_URL(state, payload) {
@@ -36,6 +39,9 @@ export default {
     },
     SET_API_BIKE_INTERFACE(state, payload) {
       state.user_bikes = payload;
+    },
+    SET_POLICE_INTERFACE(state, payload) {
+      state.policers = payload;
     },
   },
   actions: {
@@ -57,7 +63,7 @@ export default {
      * @param {*} param1
      */
     async getHistoryBikesByPolicers({ commit, dispatch }, { payload }) {
-      let history = _.fetchHistory.bind({ payload, schema: REQUEST.GET });
+      let history = _.fetchHistory.bind(null, { payload, schema: REQUEST.GET });
 
       if (payload) {
         const response = await history();
@@ -75,11 +81,38 @@ export default {
     setBikeInterface({ commit }, { payload }) {
       commit("SET_API_BIKE_INTERFACE", payload);
     },
+    setPoliceInterface({ commit }, { payload }) {
+      commit("SET_POLICE_INTERFACE", payload);
+    },
     async createBikeUser({ commit, dispatch }, { payload }) {
       return await _.createUser({ payload, schema: REQUEST.POST });
     },
-    async fillOutBike({ commit, dispatch }, { payload }) {
-      console.log("123");
+    async fillOutStolenBike({ commit, dispatch }, { payload }) {
+      let bike = _.createBike.bind(null, { payload, schema: REQUEST.POST });
+      return await bike();
+    },
+    async fetchStolenBike({ commit, dispatch }, { payload }) {
+      let historyBike = _.fetchStolenBikes.bind(null, {
+        payload,
+        schema: REQUEST.GET,
+      });
+
+      return await historyBike();
+    },
+    async createPoliceQuery({ commit, dispatch }, { payload }) {
+      let createPolice = _.createPolice.bind(null, {
+        payload,
+        schema: REQUEST.POST,
+      });
+      return await createPolice();
+    },
+    async resolveStolenBike({ commit, dispatch }, { payload }) {
+      let resolveBike = _.resovleBike.bind(null, {
+        payload,
+        schema: REQUEST.POST,
+      });
+
+      return await resolveBike();
     },
   },
   getters: {

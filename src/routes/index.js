@@ -17,9 +17,14 @@ export function createRoute() {
         component: () => import("../views/Default.vue"),
       },
       {
-        path: routes.pages.users,
+        path: routes.pages.query,
         name: "users",
         component: () => import("../views/Users.vue"),
+      },
+      {
+        path: routes.pages.checkout,
+        name: "history",
+        component: () => import("../views/History.vue"),
       },
       {
         path: routes.pages.policers,

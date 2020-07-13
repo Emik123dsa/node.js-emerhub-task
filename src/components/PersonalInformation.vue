@@ -138,6 +138,24 @@ export default {
           })
         );
 
+        if (response && response.response && response.response.code === 3) {
+          this.errors = [
+            {
+              msg:
+                response.response.msg ||
+                "You have reached out the limit of total stolen bikes, which you could add"
+            }
+          ];
+        }
+
+        if (response && response.response && response.response.code === 4) {
+          this.errors = [
+            {
+              msg: response.response.msg || "Your password is not being correct"
+            }
+          ];
+        }
+
         if (response && response.error && response.error.error.length > 0) {
           this.errors = response.error.error;
         }
@@ -145,17 +163,48 @@ export default {
         if (response && response.response && response.response.code === 1) {
           const json = this.$cookies.get("json");
 
+          const bikeStored = await this.$store.dispatch(
+            "main/fillOutStolenBike",
+            {
+              payload: {
+                ...this.users,
+                ...this.user_bikes,
+                asap: this.asap
+              }
+            }
+          );
+
           if (!json) {
             this.$cookies.set("json", response.response.details);
           }
 
-          this.successes = [
-            { msg: "Your account has been succesfully stored" }
-          ];
+          if (
+            bikeStored &&
+            bikeStored.response &&
+            bikeStored.response.code === 1
+          ) {
+            this.successes = [
+              {
+                msg:
+                  bikeStored.response.details[0] ||
+                  "Your stolen bike has been successfully saved, please, check out your current status in the tab: Check-in"
+              }
+            ];
+          }
+
+          if (bikeStored && bikeStored.error && bikeStored.error.code === 2) {
+            this.errors = [
+              { msg: "Stolen bike is already existing with this serial number" }
+            ];
+          }
         }
 
         if (response && response.error && response.error.code === 2) {
-          this.errors = [{ msg: "O-o-ps! This account is already existing" }];
+          this.errors = [
+            {
+              msg: "This account is already existing, try it out once more!"
+            }
+          ];
         }
       } else {
         this.errors = [

@@ -52,6 +52,9 @@ const callApi = async (endpoint, queryUrl, schema) => {
 export const fetchHistory = async ({ payload, schema }) =>
   await callApi(`/api/getHistoryBikes`, payload, schema);
 
+export const fetchStolenBikes = async ({ payload, schema }) =>
+  await callApi(`/api/getStolenBikes`, payload, schema);
+
 export const createUser = async ({ payload, schema }) =>
   await callApi(`/api/createBikeUser`, payload, schema);
 

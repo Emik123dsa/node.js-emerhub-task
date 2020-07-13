@@ -1,8 +1,9 @@
 const { Router } = require("express");
 const { getHash } = require("../Helpers/Hash");
 const { check, validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
 
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 import config from "../Config";
 
@@ -37,6 +38,29 @@ router.post(
 
     try {
       const { owner, address, phone_number, passport_number, email } = req.body;
+
+      var bearerUser = await Owners.findOne({
+        email: email,
+      });
+
+      if (bearerUser !== null && typeof bearerUser !== null) {
+        const comparePassport = await bcrypt.compare(
+          passport_number,
+          bearerUser.passport_number
+        );
+
+        if (comparePassport) {
+          return res.status(200).json({
+            msg: "Authorized",
+            code: 1,
+          });
+        } else {
+          return res.status(200).json({
+            msg: "Your password is not being correct",
+            code: 4,
+          });
+        }
+      }
 
       const passport = await getHash(passport_number);
 

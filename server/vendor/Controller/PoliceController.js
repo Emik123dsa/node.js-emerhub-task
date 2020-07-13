@@ -189,7 +189,7 @@ router.get(
       });
     }
     try {
-      const { email, bearer } = req.query;
+      const { email, bearer, mode } = req.query;
 
       var owner = await Policers.findOne({
         email: email,
@@ -205,7 +205,10 @@ router.get(
       const match = await bcrypt.compare(bearer, owner.bearer);
       if (match) {
         return res.status(200).json({
-          details: owner && owner.history_bikes,
+          details:
+            owner && mode === "history"
+              ? owner.history_bikes
+              : owner.served_bikes,
           msg: "OK",
           code: 1,
         });

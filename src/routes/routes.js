@@ -1,7 +1,8 @@
 export default {
   pages: {
     main: "/",
-    users: "/users",
+    query: "/query",
     policers: "/policers",
+    checkout: "/checkout",
   },
 };

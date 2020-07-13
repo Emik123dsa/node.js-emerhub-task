@@ -1,14 +1,17 @@
 <template>
   <sui-segment>
-      <sui-container>
-          
-      </sui-container>
+    <policer-entrance />
   </sui-segment>
 </template>
 
 <script>
+import PolicerEntrance from "../components/PolicerEntrance.vue";
+
 export default {
-  name: "policers"
+  name: "policers",
+  components: {
+    PolicerEntrance
+  }
 };
 </script>
 
