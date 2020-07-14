@@ -40,9 +40,6 @@ export default {
     SET_API_BIKE_INTERFACE(state, payload) {
       state.user_bikes = payload;
     },
-    SET_POLICE_INTERFACE(state, payload) {
-      state.policers = payload;
-    },
   },
   actions: {
     async serverExpressInit({ dispatch, commit }, { req, res }) {
@@ -65,24 +62,24 @@ export default {
     async getHistoryBikesByPolicers({ commit, dispatch }, { payload }) {
       let history = _.fetchHistory.bind(null, { payload, schema: REQUEST.GET });
 
-      if (payload) {
-        const response = await history();
+      const response = await history();
 
-        if (response.code === 1) {
-          commit("SET_HISTORY_BIKES", response && response.details);
-        } else {
-          commit("CLEAR_HISTORY_BIKES");
-        }
+      if (response && response.response && response.response.code === 1) {
+        commit(
+          "SET_HISTORY_BIKES",
+          response && response.response && response.response.details
+        );
+      } else {
+        commit("CLEAR_HISTORY_BIKES");
       }
+
+      return response;
     },
     setUserInterface({ commit }, { payload }) {
       commit("SET_API_USER_INTERFACE", payload);
     },
     setBikeInterface({ commit }, { payload }) {
       commit("SET_API_BIKE_INTERFACE", payload);
-    },
-    setPoliceInterface({ commit }, { payload }) {
-      commit("SET_POLICE_INTERFACE", payload);
     },
     async createBikeUser({ commit, dispatch }, { payload }) {
       return await _.createUser({ payload, schema: REQUEST.POST });
@@ -104,6 +101,7 @@ export default {
         payload,
         schema: REQUEST.POST,
       });
+
       return await createPolice();
     },
     async resolveStolenBike({ commit, dispatch }, { payload }) {
@@ -120,5 +118,6 @@ export default {
     users: (s) => s.users,
     historyBikes: (s) => s.historyBikes,
     user_bikes: (s) => s.user_bikes,
+    policers: (s) => s.policers,
   },
 };

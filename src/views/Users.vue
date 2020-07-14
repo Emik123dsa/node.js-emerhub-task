@@ -18,10 +18,6 @@ export default {
   serverPrefetch() {
     const { res, req } = this.$ssrContext;
     const json = req.cookies && req.cookies.json;
-
-    if (json) {
-      //res.redirect("/create");
-    }
   }
 };
 </script>

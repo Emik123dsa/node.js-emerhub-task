@@ -27,20 +27,20 @@ export function createRoute() {
         component: () => import("../views/History.vue"),
       },
       {
+        path: routes.pages.vendor,
+        name: "History Of Policer\'s\ bikes",
+        component: () => import("../views/Vendor.vue"),
+      },
+      {
         path: routes.pages.policers,
         name: "policers",
         component: () => import("../views/Policers.vue"),
-        children: [
-          {
-            path: "resolve",
-            component: () => import("../views/Users.vue"),
-          },
-          {
-            path: "history",
-            component: () => import("../views/Users.vue"),
-          },
-        ],
       },
+      {
+        path: routes.pages.resolver,
+        name: "Resolve Stolen Bike",
+        component: () => import ("../views/Vendor.vue")
+      }
     ],
   });
 }

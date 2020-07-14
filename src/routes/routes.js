@@ -4,5 +4,7 @@ export default {
     query: "/query",
     policers: "/policers",
     checkout: "/checkout",
+    vendor: "/vendor",
+    resolver: "/resolve",
   },
 };
