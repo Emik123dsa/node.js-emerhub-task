@@ -98,7 +98,7 @@ export default {
               this.$coookies.set("json_policer", response.response.details);
             }
 
-            this.$router.push("/vendor");
+            this.$router.push("/resolve");
           }
         } catch (e) {
           console.error(e);

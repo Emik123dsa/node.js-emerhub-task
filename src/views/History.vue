@@ -64,7 +64,7 @@
             <sui-table-cell>{{meta_features.serialNumber}}</sui-table-cell>
             <sui-table-cell>
               <sui-button
-                :color="meta_features.status === 'PENDING' ? 'red' : 'green'"
+                :color="currentColor(meta_features.status)"
               >{{meta_features.status}}</sui-button>
             </sui-table-cell>
             <sui-table-cell>{{meta_features.createdAt}}</sui-table-cell>
@@ -93,8 +93,19 @@ export default {
     };
   },
   methods: {
+    currentColor(map) {
+      switch (map) {
+        case "SUSPECTED":
+          return "yellow";
+        case "APPROVEN":
+          return "green";
+        case "DENIED":
+          return "red";
+        default:
+          return "blue";
+      }
+    },
     async submitVendor(e) {
-        
       e.preventDefault();
       this.errors = [];
       this.received = false;

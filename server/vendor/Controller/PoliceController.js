@@ -87,6 +87,7 @@ router.post(
             const historyBikes = {
               id: updatedStolenBike.id,
               name_bike: updatedStolenBike.name_bike,
+              model_bike: updatedStolenBike.model_bike,
               serial_number: updatedStolenBike.serial_number,
               asap: updatedStolenBike.asap,
               status: operation,

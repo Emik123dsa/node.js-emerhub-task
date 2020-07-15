@@ -43,7 +43,7 @@
             <sui-table-cell>{{feature.nameBike}}</sui-table-cell>
             <sui-table-cell>{{feature.serialNumber}}</sui-table-cell>
             <sui-table-cell>
-              <sui-button :color="feature.status === 'PENDING' ? 'red' : 'green'">{{feature.status}}</sui-button>
+              <sui-button :color="currentColor(feature.status)">{{feature.status}}</sui-button>
             </sui-table-cell>
             <sui-table-cell>{{feature.createdAt}}</sui-table-cell>
             <sui-table-cell>{{feature.modifiedAt}}</sui-table-cell>
@@ -65,7 +65,7 @@ export default {
         bearer: ""
       },
       errors: [],
-      result: [],
+      //result: [],
       loading: false,
       mode: "history"
     };
@@ -76,6 +76,18 @@ export default {
     }
   },
   methods: {
+    currentColor(map) {
+      switch (map) {
+        case "SUSPECTED":
+          return "yellow";
+        case "APPROVEN":
+          return "green";
+        case "DENIED":
+          return "red";
+        default:
+          return "blue";
+      }
+    },
     async fetchHistoryBikes(e) {
       this.loading = true;
       e.preventDefault();
@@ -94,11 +106,19 @@ export default {
             })
           );
 
-          if (res && res.response && res.response.code === 1) {
+          if (
+            res &&
+            res.error &&
+            res.error.error &&
+            res.error.error.length > 0
+          ) {
+            this.errors = res.error.error;
           }
 
-          if (res && res.error && res.error.error.length > 0) {
-            this.errors = res.error.error;
+          if (res && res.error && res.error.msg) {
+            this.errors = [
+              { msg: res.error.msg || "This policer is not existing" }
+            ];
           }
         } catch (e) {
           console.error(e);

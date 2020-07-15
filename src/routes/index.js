@@ -28,7 +28,7 @@ export function createRoute() {
       },
       {
         path: routes.pages.vendor,
-        name: "History Of Policer\'s\ bikes",
+        name: "History Of Policer's bikes",
         component: () => import("../views/Vendor.vue"),
       },
       {
@@ -39,8 +39,8 @@ export function createRoute() {
       {
         path: routes.pages.resolver,
         name: "Resolve Stolen Bike",
-        component: () => import ("../views/Vendor.vue")
-      }
+        component: () => import("../views/VendorStolen.vue"),
+      },
     ],
   });
 }
