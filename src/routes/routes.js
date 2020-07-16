@@ -6,5 +6,6 @@ export default {
     checkout: "/checkout",
     vendor: "/vendor",
     resolver: "/resolve",
+    api: "/documentation"
   },
 };

@@ -65,12 +65,16 @@
           </sui-dropdown-item>
           <sui-dropdown-divider />
           <sui-dropdown-header>API</sui-dropdown-header>
-          <sui-dropdown-item>Documentation</sui-dropdown-item>
+          <router-link class="ui item" to="/documentation">Documentation</router-link>
           <sui-dropdown-divider />
           <sui-dropdown-header>ORIGIN</sui-dropdown-header>
-          <sui-dropdown-item>
+          <a
+            class="ui item"
+            href="https://github.com/Emik123dsa/node.js-emerhub-task"
+            target="_blank"
+          >
             <sui-icon name="github" color="black" />GitHub
-          </sui-dropdown-item>
+          </a>
         </sui-dropdown-menu>
       </sui-dropdown>
     </sui-menu-menu>

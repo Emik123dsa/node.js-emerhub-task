@@ -86,11 +86,11 @@ export default {
             "main/createPoliceQuery",
             { payload: { ...this.query } }
           );
-
-          if (response && response.error && response.error.error.length > 0) {
-            this.errors = response.error.error;
+          if (response && response.error && response.error.code === 2) {
+            this.errors = [
+              { msg: "Sorry, but this policer is already existing " }
+            ];
           }
-
           if (response && response.response && response.response.code === 1) {
             const json = this.$cookies.get("json_policer");
 
@@ -101,8 +101,7 @@ export default {
             this.$router.push("/resolve");
           }
         } catch (e) {
-          console.error(e);
-          await Promise.reject(e);
+          return await Promise.reject(e);
         }
       }
 

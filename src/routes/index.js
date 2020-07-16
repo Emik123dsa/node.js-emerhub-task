@@ -41,6 +41,11 @@ export function createRoute() {
         name: "Resolve Stolen Bike",
         component: () => import("../views/VendorStolen.vue"),
       },
+      {
+        path: routes.pages.api,
+        name: "API",
+        component: () => import("../views/API.vue"),
+      },
     ],
   });
 }
