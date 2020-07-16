@@ -9,10 +9,13 @@
     "rimraf": "rimraf ./build",
     "dev:mongo": "cross-env NODE_ENV=development webpack -w --config webpack/server-mongo/webpack.mongo.dev.babel.js",
     "dev:ssr": "cross-env NODE_ENV=development webpack -w --config webpack/server/webpack.server.dev.babel.js",
-    "dev": "yarn run rimraf && yarn run dev:ssr && yarn run dev:mongo",
+    "dev": "npm run rimraf && yarn run dev:ssr && npm run dev:mongo",
     "build:ssr": "cross-env NODE_ENV=production webpack --config webpack/server/webpack.server.prod.babel.js",
-    "build": "yarn run rimraf && yarn run build:ssr",
+    "build": "npm run rimraf && npm run build:ssr",
     "start": "node server/index.js"
+  },
+  "engines": {
+    "node": "12.x"
   },
   "dependencies": {
     "autoprefixer": "^9.8.4",
