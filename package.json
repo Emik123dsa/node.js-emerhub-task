@@ -5,6 +5,9 @@
   "repository": "https://github.com/Emik123dsa/node.js-emerhub-task.git",
   "author": "= <=>",
   "license": "MIT",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "rimraf": "rimraf ./build",
     "dev:mongo": "cross-env NODE_ENV=development webpack -w --config webpack/server-mongo/webpack.mongo.dev.babel.js",
@@ -13,7 +16,7 @@
     "build:ssr": "cross-env NODE_ENV=production webpack --config webpack/server/webpack.server.prod.babel.js",
     "build:mongo": "cross-env NODE_ENV=production webpack --config webpack/server-mongo/webpack.mongo.prod.babel.js",
     "build": "yarn run rimraf && yarn run build:ssr && yarn run build:mongo",
-    "start": "nodemon build/server.js"
+    "start": "node build/server.js"
   },
   "dependencies": {
     "autoprefixer": "^9.8.4",
@@ -82,9 +85,7 @@
     "webpack-dev-middleware": "^3.7.2",
     "webpack-hot-middleware": "^2.25.0",
     "webpack-merge": "^4.2.2",
-    "webpack-node-externals": "^1.7.2"
-  },
-  "devDependencies": {
+    "webpack-node-externals": "^1.7.2",
     "@babel/core": "^7.10.4",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-decorators": "^7.10.4",
@@ -97,5 +98,10 @@
     "@babel/preset-env": "^7.10.4",
     "babel-loader": "^8.1.0",
     "babel-polyfill": "^6.26.0"
-  }
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ]
 }
