@@ -17,10 +17,7 @@ import bodyParser from "body-parser";
 
 import fs from "fs";
 
-const template = fs.readFileSync(
-  path.resolve("build/static/index.html"),
-  "utf-8"
-);
+const template = fs.readFileSync(path.resolve("build/static/index.html"), "utf-8");
 
 import serverBundle from "../build/vue-ssr-server-bundle.json";
 import clientManifest from "../build/vue-ssr-client-manifest.json";
@@ -60,6 +57,4 @@ server.get("*", (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
-
-server.listen(PORT, () => console.log(`Listening on ${PORT}`));
+server.listen(process.env.PORT || 3000);
