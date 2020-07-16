@@ -1,4 +1,4 @@
-import Database from "./vendor";
+const Database = require( "./vendor");
 
 const DB = new Database();
 
@@ -6,21 +6,24 @@ if (DB instanceof Database) {
   DB.initDB();
 }
 
-import path from "path";
+const path = require( "path");
 
-import express from "express";
+const express = require( "express");
 
-import { createBundleRenderer } from "vue-server-renderer";
+const { createBundleRenderer } = require( "vue-server-renderer");
 
-import cookieParser from "cookie-parser";
-import bodyParser from "body-parser";
+const cookieParser = require( "cookie-parser");
+const bodyParser = require( "body-parser");
 
-import fs from "fs";
+const fs = require( "fs");
 
-const template = fs.readFileSync(path.resolve("build/static/index.html"), "utf-8");
+const template = fs.readFileSync(
+  path.resolve("build/static/index.html"),
+  "utf-8"
+);
 
-import serverBundle from "../build/vue-ssr-server-bundle.json";
-import clientManifest from "../build/vue-ssr-client-manifest.json";
+const serverBundle = require( "../build/vue-ssr-server-bundle.json");
+const clientManifest = require( "../build/vue-ssr-client-manifest.json");
 
 const server = express();
 
@@ -57,4 +60,7 @@ server.get("*", (req, res) => {
   });
 });
 
-server.listen(process.env.PORT || 3000);
+const PORT = process.env.PORT || 5000;
+
+
+server.listen(PORT, console.log(`Server is listening port: ${PORT}`));

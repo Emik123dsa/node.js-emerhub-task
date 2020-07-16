@@ -1,5 +1,5 @@
-import { Schema, model } from "mongoose";
-import uniqueValidator from "mongoose-unique-validator";
+const { Schema, model } = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 
 const schema = new Schema(
   {

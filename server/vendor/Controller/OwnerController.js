@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 
 const { v4: uuidv4 } = require("uuid");
 
-import config from "../Config";
+const config = require("../Config");
 
 const { VENDOR_CONNECTION } = config;
 

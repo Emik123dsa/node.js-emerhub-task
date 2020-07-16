@@ -1,3 +1,3 @@
-import * as config from "./database";
+const config = require("./database");
 
-export default config;
+module.exports = config;

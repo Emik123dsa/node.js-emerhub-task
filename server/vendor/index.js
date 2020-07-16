@@ -1,8 +1,8 @@
-import db from "./Config";
+const db = require("./Config");
 
-const { VENDOR_CONNECTION } = db;
+const VENDOR_CONNECTION  = db;
 
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 /*******************
  * SINGLETON *******
@@ -64,4 +64,4 @@ class Database {
   getDB = async () => {};
 }
 
-export default Database;
+module.exports = Database;
