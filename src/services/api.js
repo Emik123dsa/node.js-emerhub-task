@@ -1,4 +1,4 @@
-const API_SCHEMA = "http://localhost:5000";
+const API_SCHEMA = "";
 import fetch from "isomorphic-fetch";
 import qs from "qs";
 

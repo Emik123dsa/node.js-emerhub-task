@@ -14,7 +14,7 @@ const { v4: uuidv4 } = require("uuid");
 
 const config = require("../Config");
 
-const { VENDOR_CONNECTION } = config;
+const VENDOR_CONNECTION = config;
 
 const StolenBikes = require("../Model/StolenBikes");
 
