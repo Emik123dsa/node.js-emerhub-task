@@ -3,13 +3,20 @@ const nodeExternals = require("webpack-node-externals");
 const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 
+const VueLoaderPlugin = require("vue-loader/lib/plugin");
+
+const VueSSRServerPlugin = require("vue-server-renderer/server-plugin");
+
 const alias = require("../../helpers/alias");
+
 const rules = require("./rules");
 
 const nodeConfig = {
   target: "node",
   mode: "production",
-  entry: "./server",
+  entry: {
+    main: ["babel-polyfill", "./server/entry-server.js"],
+  },
   externals: [nodeExternals()],
   output: {
     path: path.resolve("build"),
@@ -27,6 +34,8 @@ const nodeConfig = {
     },
   },
   plugins: [
+    new VueLoaderPlugin(),
+    new VueSSRServerPlugin(),
     new TerserPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.DefinePlugin({
@@ -40,18 +49,12 @@ const nodeConfig = {
     }),
   ],
   resolve: {
-    alias: {
-      m: path.resolve("server/vendor/Model"),
-      v: path.resolve("server/vendor/View"),
-      c: path.resolve("server/vendor/Controller"),
-    },
-    modules: [
-      path.resolve("./app"),
-      path.resolve(process.cwd(), "node_modules"),
-    ],
+    modules: ["node_modules"],
     extensions: [".js", ".jsx", ".react.js"],
     mainFields: ["browser", "jsnext:main", "main"],
   },
 };
 
-module.exports = [nodeConfig];
+const browserConfig = require("../client/webpack.client.prod.babel");
+
+module.exports = [nodeConfig, browserConfig];
