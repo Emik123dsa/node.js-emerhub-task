@@ -60,6 +60,6 @@ server.get("*", (req, res) => {
   });
 });
 
-var port = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
-server.listen(port);
+server.listen(PORT, () => console.log(`Listening on ${PORT}`));
