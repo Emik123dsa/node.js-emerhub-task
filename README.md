@@ -13,9 +13,6 @@ yarn run dev && yarn run dev:mongo && yarn run start
 ```
 yarn run build && yarn run start
 ```
-
-Please, don't forget to add <!--vue-ssr-outlet--> in the main.html after bundle will be succesfully created!
-
 ### Code testing:
 
 ```
